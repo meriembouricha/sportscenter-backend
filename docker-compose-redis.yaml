@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: sportscenter_redis
+    ports:
+      - "6385:6379"
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - redisnet
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: sportscenter_redis_admin
+    environment:
+      - REDIS_HOSTS=local:sportscenter_redis:6379
+    ports:
+      - "45741:8081"
+    depends_on:
+      - redis
+    networks:
+      - redisnet
+
+networks:
+  redisnet:
+    driver: bridge
