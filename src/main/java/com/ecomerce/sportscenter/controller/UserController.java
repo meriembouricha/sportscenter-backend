@@ -63,5 +63,9 @@ public class UserController {
         return userService.deactivateUser(id);
     }
 
+    @PutMapping("/activate/{id}")
+    public AppUser activateUser(@PathVariable Long id) {
+        return userService.activateUser(id);
+    }
 
 }

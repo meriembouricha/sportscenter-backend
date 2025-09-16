@@ -1,4 +1,7 @@
-//package com.ecoomerce.sportscenter.config;
+package com.ecomerce.sportscenter.config;
+
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 //
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
@@ -11,7 +14,9 @@
 //
 //@Configuration
 //@EnableSpringDataWebSupport
-//public class WebConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
+
+}
 //    @Bean
 //    public PageableHandlerMethodArgumentResolver customPageableResolver(){
 //        PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver(){

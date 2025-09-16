@@ -47,6 +47,10 @@ public class UserService {
         return userRepository.save(user);  // Sauvegarde l'utilisateur
     }
 
-
+    public AppUser activateUser(Long id) {
+        AppUser user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setEnabled(true);
+        return userRepository.save(user);
+    }
 
 }

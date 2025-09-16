@@ -38,7 +38,7 @@ public class CheckoutService {
     @Autowired
     private ProductService productService;
 
-    @Value("${stripe.api.key}")
+    //@Value("${stripe.api.key}")
     private String stripeApiKey;
 
     private long toCents(Long priceInDollars) {

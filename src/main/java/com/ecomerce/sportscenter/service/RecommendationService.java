@@ -28,14 +28,22 @@ public class RecommendationService {
 
     public List<ProductResponse> fetchRecommendedProducts(Long userId) {
         String url = recommendationBaseUrl + "/" + userId;
-        RecommendationResponse response = restTemplate.getForObject(url, RecommendationResponse.class);
 
-        if (response != null && response.getRecommendations() != null) {
-            return response.getRecommendations().stream()
-                    .map(productId -> productService.getProductById(productId))
-                    .collect(Collectors.toList());
+        try {
+            RecommendationResponse response = restTemplate.getForObject(url, RecommendationResponse.class);
+
+            if (response != null && response.getRecommendations() != null) {
+                return response.getRecommendations().stream()
+                        .map(productId -> productService.getProductById(productId))
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            // Log l'erreur mais ne bloque pas l'affichage des produits
+            System.out.println("Recommendation service unavailable for user {}: {}"+ userId+ e.getMessage());
         }
 
+        // Retourne une liste vide si le service de recommandations échoue
         return List.of();
     }
+
 }

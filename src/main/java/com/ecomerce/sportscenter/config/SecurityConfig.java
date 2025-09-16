@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/auth/signup","/api/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Accès réservé aux admins
                         .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/products/**", "/store/**").permitAll() // endpoints publics
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint))

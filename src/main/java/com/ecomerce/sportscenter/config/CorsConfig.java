@@ -6,12 +6,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200")
+        registry.addMapping("/**") // Tous les endpoints
+                .allowedOrigins("http://localhost:4200", "http://localhost") // Angular dev + prod
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*") // Autoriser tous les headers
-                .allowCredentials(true);
+                .allowedHeaders("*") // Tous les headers
+                .allowCredentials(true)
+                .maxAge(3600); // Cache du preflight request (1h)
     }
 }
