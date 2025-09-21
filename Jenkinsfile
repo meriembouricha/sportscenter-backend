@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONAR_TOKEN = credentials('sonar-token')
         GITHUB_TOKEN = credentials('github-pat')
-        ACR_USER = credentials('acr-user')
+        ACR = credentials('acr-user')
         DOCKER_IMAGE = 'sportscenter.azurecr.io/sportscenter-backend'
     }
     
@@ -96,7 +96,7 @@ pipeline {
             steps {
                 script {
                     // Login to Azure Container Registry
-                    sh "echo \$ACR_USER | docker login sportscenter.azurecr.io --username \$ACR_USER --password-stdin"
+                    sh "echo $ACR_PSW | docker login sportscenter.azurecr.io --username $ACR_USR --password-stdin"
                     
                     // Push the image
                     sh "docker push ${DOCKER_IMAGE}"
