@@ -50,7 +50,7 @@ pipeline {
             steps {
                 // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
                 withSonarQubeEnv('SonarQubeServer') {
-                    sh 'mvn verify sonar:sonar -Dsonar.login=$SONAR_TOKEN'
+                    sh 'mvn verify sonar:sonar -Dsonar.token=$SONAR_TOKEN'
                 }
             }
         }
@@ -58,7 +58,7 @@ pipeline {
         stage('Wait for Quality Gate') {
             steps {
                 script {
-                    timeout(time: 1, unit: 'MINUTES') {
+                    timeout(time: 5, unit: 'MINUTES') {
                         def qg = waitForQualityGate()
                         if (qg.status != 'OK') {
                             echo "Quality Gate status: ${qg.status}"
