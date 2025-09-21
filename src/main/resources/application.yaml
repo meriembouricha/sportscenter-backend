@@ -6,9 +6,9 @@ spring:
     name: SportsCenter
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3321/MeriemPFE?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:root}
+    url: jdbc:mysql://sportscenter.mysql.database.azure.com:3306/sportscenter?ssl-mode=REQUIRED&serverTimezone=UTC
+    username: sportscenter_user
+    password: Randomly123456
 
   jpa:
     hibernate:
@@ -17,14 +17,14 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
 
   data:
     redis:
-      host: ${SPRING_REDIS_HOST:localhost}
-      port: ${SPRING_REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      host: 4.178.148.130
+      port: 6379
+      password:
       ssl:
         enabled: false
 
