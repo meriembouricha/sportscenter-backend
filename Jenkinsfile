@@ -48,7 +48,8 @@ pipeline {
         
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-token') {
+                // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
+                withSonarQubeEnv('SonarQubeServer') {
                     sh 'mvn verify sonar:sonar -Dsonar.login=$SONAR_TOKEN'
                 }
             }
@@ -113,6 +114,7 @@ pipeline {
         }
         always {
             // Clean up Docker images to save space
+            // Using || true to ensure commands succeed even without Docker permissions
             sh 'docker rmi sportscenter-backend || true'
             sh "docker rmi ${DOCKER_IMAGE} || true"
         }
