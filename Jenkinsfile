@@ -103,7 +103,10 @@ pipeline {
         
         stage('Publish JAR to Nexus') {
             steps {
-                sh "mvn deploy -DskipTests"
+                sh """
+                mvn deploy -DskipTests \
+                  -DaltDeploymentRepository=nexus-releases::default::http://$NEXUS_USR:$NEXUS_PSW@20.199.40.111:8081/repository/maven-releases/
+                """
             }
         }
         
