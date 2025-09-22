@@ -34,9 +34,25 @@ pipeline {
             }
         }
         
-        stage('Run Unit Tests') {
+        stage('Run Unit Tests & Coverage') {
             steps {
-                sh 'mvn test -Dspring.profiles.active=test'
+                sh 'mvn clean test jacoco:report -Dspring.profiles.active=test'
+            }
+            post {
+                always {
+                    // Publish test results
+                    publishTestResults testResultsPattern: 'target/surefire-reports/*.xml'
+                    
+                    // Publish JaCoCo coverage report
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Coverage Report'
+                    ])
+                }
             }
         }
         
@@ -50,7 +66,7 @@ pipeline {
             steps {
                 // Note: 'SonarQubeServer' must match the Jenkins SonarQube server configuration name
                 withSonarQubeEnv('SonarQubeServer') {
-                    sh 'mvn verify sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                    sh 'mvn verify sonar:sonar -Dsonar.token=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml'
                 }
             }
         }
