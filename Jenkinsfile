@@ -57,16 +57,6 @@ pipeline {
             }
         }
         
-        stage('Publish Reports to Nexus') {
-            steps {
-                sh """
-                curl -v -u $NEXUS_USR:$NEXUS_PSW \
-                  --upload-file target/site/jacoco/index.html \
-                  http://20.199.40.111:8081/repository/reports/jacoco-report-${BUILD_NUMBER}.html
-                """
-            }
-        }
-        
         stage('Trivy File System Scan') {
             steps {
                 sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
@@ -103,8 +93,33 @@ pipeline {
         
         stage('Publish JAR to Nexus') {
             steps {
-                configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
-                    sh "mvn deploy -s $MAVEN_SETTINGS -DskipTests"
+                withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USR', passwordVariable: 'NEXUS_PSW')]) {
+                    sh "mvn deploy -s jenkins-settings.xml -DskipTests"
+                }
+            }
+        }
+        
+        stage('Publish Reports to Nexus (raw repo)') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-creds', usernameVariable: 'NEXUS_USR', passwordVariable: 'NEXUS_PSW')]) {
+                    script {
+                        // Create archive of JaCoCo reports
+                        sh "cd target/site && tar -czf jacoco-reports-${BUILD_NUMBER}.tar.gz jacoco/"
+                        
+                        // Upload to Nexus raw repository
+                        sh """
+                        curl -v -u $NEXUS_USR:$NEXUS_PSW \
+                          --upload-file target/site/jacoco-reports-${BUILD_NUMBER}.tar.gz \
+                          http://20.199.40.111:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
+                        """
+                        
+                        // Also upload individual HTML report
+                        sh """
+                        curl -v -u $NEXUS_USR:$NEXUS_PSW \
+                          --upload-file target/site/jacoco/index.html \
+                          http://20.199.40.111:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
+                        """
+                    }
                 }
             }
         }
