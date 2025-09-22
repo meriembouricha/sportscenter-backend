@@ -41,7 +41,7 @@ pipeline {
             post {
                 always {
                     // Publish test results
-                    publishTestResults testResultsPattern: 'target/surefire-reports/*.xml'
+                    junit 'target/surefire-reports/*.xml'
                     
                     // Publish JaCoCo coverage report
                     publishHTML([
