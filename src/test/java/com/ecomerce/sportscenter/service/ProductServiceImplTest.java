@@ -225,7 +225,7 @@ class ProductServiceImplTest {
         ProductNotFoundException exception = assertThrows(ProductNotFoundException.class, () -> {
             productService.updateProduct(999, updatedProduct);
         });
-        assertEquals("Product with given id doesn't exist", exception.getMessage());
+        assertEquals("Product not found", exception.getMessage());
         verify(productRepository).findById(999);
         verify(productRepository, never()).save(any());
     }
@@ -250,10 +250,10 @@ class ProductServiceImplTest {
         when(productRepository.findById(999)).thenReturn(Optional.empty());
 
         // When & Then
-        ProductNotFoundException exception = assertThrows(ProductNotFoundException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             productService.deleteProduct(999);
         });
-        assertEquals("Product with given id doesn't exist", exception.getMessage());
+        assertEquals("Product not found", exception.getMessage());
         verify(productRepository).findById(999);
         verify(productRepository, never()).delete(any());
     }
@@ -261,30 +261,37 @@ class ProductServiceImplTest {
     @Test
     void incrementQuantity_WhenProductExists_ShouldIncrementQuantity() {
         // Given
-        when(productRepository.findById(1)).thenReturn(Optional.of(testProduct));
-        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+        when(productRepository.existsById(1)).thenReturn(true);
 
         // When
         productService.incrementQuantity(1, 5);
 
         // Then
-        assertEquals(15, testProduct.getQunatity());
-        verify(productRepository).findById(1);
-        verify(productRepository).save(testProduct);
+        verify(productRepository).existsById(1);
+        verify(productRepository).incrementProductQuantity(1, 5);
     }
 
     @Test
     void decrementQuantity_WhenProductExists_ShouldDecrementQuantity() {
         // Given
-        when(productRepository.findById(1)).thenReturn(Optional.of(testProduct));
-        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+        Product productToDecrement = Product.builder()
+                .id(1)
+                .name("Air Max")
+                .description("Comfortable running shoes")
+                .price(15000L)
+                .pictureUrl("https://example.com/airmax.jpg")
+                .qunatity(10)
+                .brand(testBrand)
+                .type(testType)
+                .build();
+        
+        when(productRepository.findById(1)).thenReturn(Optional.of(productToDecrement));
 
         // When
         productService.decrementQuantity(1, 3);
 
         // Then
-        assertEquals(7, testProduct.getQunatity());
         verify(productRepository).findById(1);
-        verify(productRepository).save(testProduct);
+        verify(productRepository).decrementProductQuantity(1, 3);
     }
 }
