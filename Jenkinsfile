@@ -5,6 +5,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonar-token')
         GITHUB_TOKEN = credentials('github-pat')
         ACR = credentials('acr-user')
+        NEXUS = credentials('nexus-creds')
         DOCKER_IMAGE = 'sportscenter.azurecr.io/sportscenter-backend'
     }
     
@@ -56,6 +57,16 @@ pipeline {
             }
         }
         
+        stage('Publish Reports to Nexus') {
+            steps {
+                sh """
+                curl -v -u $NEXUS_USR:$NEXUS_PSW \
+                  --upload-file target/site/jacoco/index.html \
+                  http://20.199.40.111:8081/repository/reports/jacoco-report-${BUILD_NUMBER}.html
+                """
+            }
+        }
+        
         stage('Trivy File System Scan') {
             steps {
                 sh 'trivy fs --exit-code 0 --severity HIGH,CRITICAL .'
@@ -87,6 +98,14 @@ pipeline {
         stage('Build JAR') {
             steps {
                 sh 'mvn package -DskipTests'
+            }
+        }
+        
+        stage('Publish JAR to Nexus') {
+            steps {
+                configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                    sh "mvn deploy -s $MAVEN_SETTINGS -DskipTests"
+                }
             }
         }
         
