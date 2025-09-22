@@ -103,9 +103,7 @@ pipeline {
         
         stage('Publish JAR to Nexus') {
             steps {
-                configFileProvider([configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
-                    sh "mvn deploy -s $MAVEN_SETTINGS -DskipTests"
-                }
+                sh "mvn deploy -DskipTests"
             }
         }
         
