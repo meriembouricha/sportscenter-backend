@@ -110,14 +110,14 @@ pipeline {
                         sh """
                         curl -v -u $NEXUS_USR:$NEXUS_PSW \
                           --upload-file target/site/jacoco-reports-${BUILD_NUMBER}.tar.gz \
-                          http://20.199.40.111:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
+                          http://20.0.136.5:8081/repository/nexus-reports/jacoco-reports-${BUILD_NUMBER}.tar.gz
                         """
                         
                         // Also upload individual HTML report
                         sh """
                         curl -v -u $NEXUS_USR:$NEXUS_PSW \
                           --upload-file target/site/jacoco/index.html \
-                          http://20.199.40.111:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
+                          http://20.0.136.5:8081/repository/nexus-reports/jacoco-report-${BUILD_NUMBER}.html
                         """
                     }
                 }
