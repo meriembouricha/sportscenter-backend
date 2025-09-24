@@ -6,7 +6,7 @@ pipeline {
         GITHUB_TOKEN = credentials('github-pat')
         ACR = credentials('acr-user')
         NEXUS = credentials('nexus-creds')
-        DOCKER_IMAGE = 'sportscenter.azurecr.io/sportscenter-backend'
+        DOCKER_IMAGE = 'sportscenteracr.azurecr.io/sportscenter-backend'
     }
     
     stages {
@@ -146,7 +146,7 @@ pipeline {
             steps {
                 script {
                     // Login to Azure Container Registry
-                    sh "echo $ACR_PSW | docker login sportscenter.azurecr.io --username $ACR_USR --password-stdin"
+                    sh "echo $ACR_PSW | docker login sportscenteracr.azurecr.io --username $ACR_USR --password-stdin"
                     
                     // Push the image
                     sh "docker push ${DOCKER_IMAGE}"
